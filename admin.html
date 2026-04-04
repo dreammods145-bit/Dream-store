@@ -24,11 +24,7 @@
       margin: 40px auto;
       padding: 20px;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: var(--primary);
-    }
+    h1 { text-align: center; margin-bottom: 30px; color: var(--primary); }
     .admin-form {
       background: white;
       padding: 30px;
@@ -41,9 +37,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 20px;
     }
-    .form-group {
-      margin-bottom: 18px;
-    }
+    .form-group { margin-bottom: 18px; }
     label {
       display: block;
       margin-bottom: 6px;
@@ -71,10 +65,7 @@
       gap: 12px;
       margin-top: 12px;
     }
-    .preview-item {
-      position: relative;
-      display: inline-block;
-    }
+    .preview-item { position: relative; display: inline-block; }
     .preview {
       width: 100px;
       height: 100px;
@@ -117,10 +108,7 @@
       overflow: hidden;
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    th, td {
-      padding: 14px 16px;
-      text-align: left;
-    }
+    th, td { padding: 14px 16px; text-align: left; }
     th {
       background: #f8f9fa;
       font-weight: 500;
@@ -199,7 +187,7 @@
           </select>
         </div>
 
-        <!-- Common Fields -->
+        <!-- Icon & Screenshots -->
         <div class="form-group">
           <label>Icon</label>
           <input type="file" id="iconUpload" accept="image/*" class="file-input" onchange="previewIcon(this)">
@@ -211,39 +199,26 @@
           <div id="screenshotPreview" class="preview-container"></div>
         </div>
 
-        <!-- Download Link - Now Common for All Categories -->
+        <!-- Common Download Link -->
         <div class="form-group" style="grid-column: 1 / -1;">
-          <label id="linkLabel">Direct Download / Buy Now URL</label>
-          <input type="url" id="adminDownloadLink" placeholder="https://example.com/file.apk or https://wa.me/... or payment link" style="font-family:monospace;">
-          <small style="color:#666;">For Apps/Games: APK link | For Jerseys: Buy Now / WhatsApp / Shop link</small>
+          <label>Direct Download / Buy Now URL</label>
+          <input type="url" id="adminDownloadLink" placeholder="https://example.com/file.apk or buy link" style="font-family:monospace;">
+          <small style="color:#666;">APK for apps • Buy/Whatsapp/Payment link for jerseys</small>
         </div>
 
-        <!-- App/Game Specific Fields -->
+        <!-- App/Game fields -->
         <div class="form-group app-fields"><label>Package Name</label><input type="text" id="adminPackage" placeholder="com.company.appname"></div>
         <div class="form-group app-fields"><label>Version</label><input type="text" id="adminVersion" placeholder="2.4.1"></div>
         <div class="form-group app-fields"><label>Build Number</label><input type="text" id="adminBuild" placeholder="241003"></div>
         <div class="form-group app-fields"><label>Developer</label><input type="text" id="adminDev" placeholder="Developer Name"></div>
         <div class="form-group app-fields"><label>Contact Email</label><input type="text" id="adminContact" placeholder="dev@example.com"></div>
 
-        <!-- Jersey Specific Fields -->
-        <div class="form-group jersey-fields" id="jerseyPriceGroup">
-          <label>Price (₹)</label>
-          <input type="number" id="adminPrice" placeholder="999" min="0">
-        </div>
-        <div class="form-group jersey-fields" id="jerseySizeGroup">
-          <label>Available Sizes</label>
-          <input type="text" id="adminSize" placeholder="S, M, L, XL, XXL">
-        </div>
-        <div class="form-group jersey-fields" id="jerseyColorGroup">
-          <label>Colors</label>
-          <input type="text" id="adminColor" placeholder="Red, Blue, Black">
-        </div>
-        <div class="form-group jersey-fields" id="jerseyStockGroup">
-          <label>Stock Quantity</label>
-          <input type="number" id="adminStock" placeholder="50" min="0">
-        </div>
+        <!-- Jersey fields -->
+        <div class="form-group jersey-fields"><label>Price (₹)</label><input type="number" id="adminPrice" placeholder="999" min="0"></div>
+        <div class="form-group jersey-fields"><label>Available Sizes</label><input type="text" id="adminSize" placeholder="S, M, L, XL, XXL"></div>
+        <div class="form-group jersey-fields"><label>Colors</label><input type="text" id="adminColor" placeholder="Red, Blue, Black"></div>
+        <div class="form-group jersey-fields"><label>Stock Quantity</label><input type="number" id="adminStock" placeholder="50" min="0"></div>
 
-        <!-- Common -->
         <div class="form-group">
           <label>Total Downloads / Sold</label>
           <input type="number" id="adminDownloads" placeholder="0" min="0" value="0">
@@ -292,9 +267,7 @@
     }
 
     function toggleJerseyFields() {
-      const category = document.getElementById('adminCategory').value;
-      const isJersey = category === 'Jerseys';
-      
+      const isJersey = document.getElementById('adminCategory').value === 'Jerseys';
       document.querySelectorAll('.app-fields').forEach(el => el.style.display = isJersey ? 'none' : 'block');
       document.querySelectorAll('.jersey-fields').forEach(el => el.style.display = isJersey ? 'block' : 'none');
     }
@@ -304,7 +277,7 @@
       preview.innerHTML = '';
       if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = e => {
           iconBase64 = e.target.result;
           const img = document.createElement('img');
           img.src = iconBase64;
@@ -316,19 +289,16 @@
     }
 
     function previewScreenshots(input) {
-      const previewContainer = document.getElementById('screenshotPreview');
+      const container = document.getElementById('screenshotPreview');
       Array.from(input.files).forEach(file => {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = e => {
           const base64 = e.target.result;
           screenshotBase64s.push(base64);
           const item = document.createElement('div');
           item.className = 'preview-item';
-          item.innerHTML = `
-            <img src="${base64}" class="preview">
-            <button class="remove-btn" onclick="removeScreenshot(this, '${base64}')">×</button>
-          `;
-          previewContainer.appendChild(item);
+          item.innerHTML = `<img src="\( {base64}" class="preview"><button class="remove-btn" onclick="removeScreenshot(this, ' \){base64}')">×</button>`;
+          container.appendChild(item);
         };
         reader.readAsDataURL(file);
       });
@@ -347,8 +317,8 @@
 
       const appData = {
         id: editingId !== null ? editingId : Date.now(),
-        title: title,
-        category: category,
+        title,
+        category,
         icon: iconBase64 || "https://picsum.photos/id/237/512/512",
         screenshots: [...screenshotBase64s],
         desc: document.getElementById('adminDesc').value.trim() || "",
@@ -372,13 +342,11 @@
 
       if (editingId !== null) {
         const index = apps.findIndex(a => a.id === editingId);
-        if (index !== -1) {
-          apps[index] = { ...apps[index], ...appData };
-          alert("Item updated successfully!");
-        }
+        if (index !== -1) apps[index] = { ...apps[index], ...appData };
+        alert("Item updated successfully!");
       } else {
         apps.push(appData);
-        alert(`New ${category} added as Pending. Approve it to show in the store.`);
+        alert(`New ${category} added as Pending.`);
       }
 
       saveToStorage();
@@ -396,25 +364,37 @@
           <td><img src="${app.icon}" width="48" height="48" style="border-radius:8px;" onerror="this.src='https://picsum.photos/id/237/512/512'"></td>
           <td>${app.title}</td>
           <td>${app.category}</td>
-          <td>
-            <span class="downloads">
-              <strong>${app.totalDownloads || 0}</strong> ${app.category === "Jerseys" ? "sold" : "downloads"}
-            </span>
-          </td>
-          <td>
-            <span class="status ${app.status === 'approved' ? 'status-approved' : 'status-pending'}">
-              ${app.status === 'approved' ? 'Approved' : 'Pending'}
-            </span>
-          </td>
+          <td><span class="downloads"><strong>${app.totalDownloads || 0}</strong> ${app.category === "Jerseys" ? "sold" : "downloads"}</span></td>
+          <td><span class="status \( {app.status === 'approved' ? 'status-approved' : 'status-pending'}"> \){app.status === 'approved' ? 'Approved' : 'Pending'}</span></td>
           <td>
             <button class="btn btn-warning action-btn" onclick="editApp(${index})">Edit</button>
             ${app.status !== 'approved' ? 
-              `<button class="btn btn-success action-btn" onclick="approveApp(${index})">Approve</button>` : ''}
-            <button class="btn btn-danger action-btn" onclick="deleteApp(${index})">Delete</button>
+              `<button class="btn btn-success action-btn" onclick="approveApp(${app.id})">Approve</button>` : ''}
+            <button class="btn btn-danger action-btn" onclick="deleteApp(${app.id})">Delete</button>
           </td>
         `;
         tbody.appendChild(row);
       });
+    }
+
+    // Fixed: Now using stable ID instead of changing index
+    function approveApp(id) {
+      if (confirm("Approve this item? It will now appear in the main store.")) {
+        const app = apps.find(a => a.id === id);
+        if (app) {
+          app.status = "approved";
+          saveToStorage();
+          loadAdminTable();
+        }
+      }
+    }
+
+    function deleteApp(id) {
+      if (confirm("Delete this item permanently?")) {
+        apps = apps.filter(a => a.id !== id);
+        saveToStorage();
+        loadAdminTable();
+      }
     }
 
     function editApp(index) {
@@ -425,6 +405,7 @@
       document.getElementById('formTitle').textContent = `Edit ${app.category}`;
       document.getElementById('saveBtn').textContent = "Update Item";
 
+      // Fill form fields (same as before)
       document.getElementById('adminTitle').value = app.title || "";
       document.getElementById('adminCategory').value = app.category || "Apps";
       document.getElementById('adminDesc').value = app.desc || "";
@@ -442,10 +423,7 @@
       screenshotBase64s.forEach(src => {
         const item = document.createElement('div');
         item.className = 'preview-item';
-        item.innerHTML = `
-          <img src="${src}" class="preview">
-          <button class="remove-btn" onclick="removeScreenshot(this, '${src}')">×</button>
-        `;
+        item.innerHTML = `<img src="\( {src}" class="preview"><button class="remove-btn" onclick="removeScreenshot(this, ' \){src}')">×</button>`;
         ssPreview.appendChild(item);
       });
 
@@ -465,22 +443,6 @@
       document.querySelector('.admin-form').scrollIntoView({ behavior: "smooth" });
     }
 
-    function approveApp(index) {
-      if (confirm("Approve this item? It will now appear in the main store.")) {
-        apps[index].status = "approved";
-        saveToStorage();
-        loadAdminTable();
-      }
-    }
-
-    function deleteApp(index) {
-      if (confirm("Delete this item permanently?")) {
-        apps.splice(index, 1);
-        saveToStorage();
-        loadAdminTable();
-      }
-    }
-
     function clearAdminForm() {
       editingId = null;
       iconBase64 = '';
@@ -494,17 +456,18 @@
       document.getElementById('iconUpload').value = '';
       document.getElementById('screenshotUpload').value = '';
 
-      const allFields = ['adminTitle','adminPackage','adminVersion','adminBuild','adminDev','adminContact',
-                        'adminDesc','adminDownloadLink','adminDownloads','adminPrice','adminSize','adminColor','adminStock'];
-      allFields.forEach(id => {
+      const fields = ['adminTitle','adminPackage','adminVersion','adminBuild','adminDev','adminContact',
+                      'adminDesc','adminDownloadLink','adminDownloads','adminPrice','adminSize','adminColor','adminStock'];
+      fields.forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.value = (id === 'adminDownloads' || id === 'adminStock' || id === 'adminPrice') ? '0' : '';
+        if (el) el.value = ['adminDownloads','adminStock','adminPrice'].includes(id) ? '0' : '';
       });
 
       document.getElementById('adminCategory').value = 'Games';
       toggleJerseyFields();
     }
 
+    // Initialize
     window.onload = () => {
       loadAdminTable();
       toggleJerseyFields();
