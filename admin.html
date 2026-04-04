@@ -99,7 +99,6 @@
     .btn-success { background: var(--success); color: white; }
     .btn-danger { background: var(--danger); color: white; }
     .btn-warning { background: #fbbc05; color: #202124; }
-    .btn-clear { background: #fbbc05; color: #202124; margin-top: 10px; }
 
     table {
       width: 100%;
@@ -166,7 +165,6 @@
     footer a { color: #8ab4f8; text-decoration: none; }
 
     .jersey-fields { display: none; }
-    .error-msg { color: var(--danger); font-weight: 500; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -179,7 +177,6 @@
       <h3 class="form-title" id="formTitle">Add New Item</h3>
       
       <div class="form-grid">
-        <!-- Your existing form fields remain the same -->
         <div class="form-group"><label>Title *</label><input type="text" id="adminTitle" placeholder="Item Title"></div>
         <div class="form-group">
           <label>Category</label>
@@ -190,6 +187,7 @@
           </select>
         </div>
 
+        <!-- Icon & Screenshots -->
         <div class="form-group">
           <label>Icon</label>
           <input type="file" id="iconUpload" accept="image/*" class="file-input" onchange="previewIcon(this)">
@@ -201,18 +199,21 @@
           <div id="screenshotPreview" class="preview-container"></div>
         </div>
 
+        <!-- Common Download Link -->
         <div class="form-group" style="grid-column: 1 / -1;">
           <label>Direct Download / Buy Now URL</label>
           <input type="url" id="adminDownloadLink" placeholder="https://example.com/file.apk or buy link" style="font-family:monospace;">
-          <small style="color:#666;">APK for apps • Buy/Whatsapp link for jerseys</small>
+          <small style="color:#666;">APK for apps • Buy/Whatsapp/Payment link for jerseys</small>
         </div>
 
+        <!-- App/Game fields -->
         <div class="form-group app-fields"><label>Package Name</label><input type="text" id="adminPackage" placeholder="com.company.appname"></div>
         <div class="form-group app-fields"><label>Version</label><input type="text" id="adminVersion" placeholder="2.4.1"></div>
         <div class="form-group app-fields"><label>Build Number</label><input type="text" id="adminBuild" placeholder="241003"></div>
         <div class="form-group app-fields"><label>Developer</label><input type="text" id="adminDev" placeholder="Developer Name"></div>
         <div class="form-group app-fields"><label>Contact Email</label><input type="text" id="adminContact" placeholder="dev@example.com"></div>
 
+        <!-- Jersey fields -->
         <div class="form-group jersey-fields"><label>Price (₹)</label><input type="number" id="adminPrice" placeholder="999" min="0"></div>
         <div class="form-group jersey-fields"><label>Available Sizes</label><input type="text" id="adminSize" placeholder="S, M, L, XL, XXL"></div>
         <div class="form-group jersey-fields"><label>Colors</label><input type="text" id="adminColor" placeholder="Red, Blue, Black"></div>
@@ -231,8 +232,6 @@
 
       <button class="btn btn-primary" id="saveBtn" onclick="saveApp()">Save as Pending</button>
       <button class="btn" onclick="clearAdminForm()">Clear Form</button>
-      <button class="btn btn-clear" onclick="clearAllData()">🗑️ Clear All Store Data (Free Space)</button>
-      <div id="errorMsg" class="error-msg"></div>
     </div>
 
     <h3>All Items (Pending & Approved)</h3>
@@ -258,39 +257,13 @@
   </footer>
 
   <script>
-    let apps = [];
+    let apps = JSON.parse(localStorage.getItem('storeApps')) || [];
     let iconBase64 = '';
     let screenshotBase64s = [];
     let editingId = null;
 
-    function safeSaveToStorage() {
-      try {
-        localStorage.setItem('storeApps', JSON.stringify(apps));
-        document.getElementById('errorMsg').textContent = '';
-        return true;
-      } catch (e) {
-        if (e.name === 'QuotaExceededError') {
-          document.getElementById('errorMsg').innerHTML = `
-            <strong>Storage Full!</strong><br>
-            You have too many/large images. Click "Clear All Store Data" to free space, then try saving again.<br>
-            Tip: Use smaller images or fewer screenshots.
-          `;
-        } else {
-          document.getElementById('errorMsg').textContent = 'Error saving data: ' + e.message;
-        }
-        console.error(e);
-        return false;
-      }
-    }
-
-    function loadFromStorage() {
-      try {
-        const saved = localStorage.getItem('storeApps');
-        apps = saved ? JSON.parse(saved) : [];
-      } catch (e) {
-        console.error("Failed to load data:", e);
-        apps = [];
-      }
+    function saveToStorage() {
+      localStorage.setItem('storeApps', JSON.stringify(apps));
     }
 
     function toggleJerseyFields() {
@@ -299,7 +272,6 @@
       document.querySelectorAll('.jersey-fields').forEach(el => el.style.display = isJersey ? 'block' : 'none');
     }
 
-    // Preview functions (same as before)
     function previewIcon(input) {
       const preview = document.getElementById('iconPreview');
       preview.innerHTML = '';
@@ -344,7 +316,7 @@
       const category = document.getElementById('adminCategory').value;
 
       const appData = {
-        id: editingId || Date.now(),
+        id: editingId !== null ? editingId : Date.now(),
         title,
         category,
         icon: iconBase64 || "https://picsum.photos/id/237/512/512",
@@ -352,7 +324,7 @@
         desc: document.getElementById('adminDesc').value.trim() || "",
         downloadLink: document.getElementById('adminDownloadLink').value.trim() || "#",
         totalDownloads: parseInt(document.getElementById('adminDownloads').value) || 0,
-        status: editingId ? (apps.find(a => a.id === editingId)?.status || "pending") : "pending"
+        status: editingId !== null ? (apps.find(a => a.id === editingId)?.status || "pending") : "pending"
       };
 
       if (category === "Jerseys") {
@@ -368,7 +340,7 @@
         appData.contact = document.getElementById('adminContact').value || "contact@example.com";
       }
 
-      if (editingId) {
+      if (editingId !== null) {
         const index = apps.findIndex(a => a.id === editingId);
         if (index !== -1) apps[index] = { ...apps[index], ...appData };
         alert("Item updated successfully!");
@@ -377,10 +349,9 @@
         alert(`New ${category} added as Pending.`);
       }
 
-      if (safeSaveToStorage()) {
-        clearAdminForm();
-        loadAdminTable();
-      }
+      saveToStorage();
+      clearAdminForm();
+      loadAdminTable();
     }
 
     function loadAdminTable() {
@@ -397,7 +368,8 @@
           <td><span class="status \( {app.status === 'approved' ? 'status-approved' : 'status-pending'}"> \){app.status === 'approved' ? 'Approved' : 'Pending'}</span></td>
           <td>
             <button class="btn btn-warning action-btn" onclick="editApp(${index})">Edit</button>
-            \( {app.status !== 'approved' ? `<button class="btn btn-success action-btn" onclick="approveApp( \){app.id})">Approve</button>` : ''}
+            ${app.status !== 'approved' ? 
+              `<button class="btn btn-success action-btn" onclick="approveApp(${app.id})">Approve</button>` : ''}
             <button class="btn btn-danger action-btn" onclick="deleteApp(${app.id})">Delete</button>
           </td>
         `;
@@ -405,12 +377,14 @@
       });
     }
 
+    // Fixed: Now using stable ID instead of changing index
     function approveApp(id) {
-      if (confirm("Approve this item?")) {
+      if (confirm("Approve this item? It will now appear in the main store.")) {
         const app = apps.find(a => a.id === id);
         if (app) {
           app.status = "approved";
-          if (safeSaveToStorage()) loadAdminTable();
+          saveToStorage();
+          loadAdminTable();
         }
       }
     }
@@ -418,45 +392,83 @@
     function deleteApp(id) {
       if (confirm("Delete this item permanently?")) {
         apps = apps.filter(a => a.id !== id);
-        if (safeSaveToStorage()) loadAdminTable();
+        saveToStorage();
+        loadAdminTable();
       }
     }
 
-    function editApp(tableIndex) {
-      const app = apps[tableIndex];
+    function editApp(index) {
+      const app = apps[index];
       if (!app) return;
-      // ... (same edit logic as previous version - omitted for brevity, keep your existing editApp code here)
+
       editingId = app.id;
-      // Fill all form fields (copy from your previous working editApp)
       document.getElementById('formTitle').textContent = `Edit ${app.category}`;
       document.getElementById('saveBtn').textContent = "Update Item";
-      // ... rest of edit logic
+
+      // Fill form fields (same as before)
+      document.getElementById('adminTitle').value = app.title || "";
+      document.getElementById('adminCategory').value = app.category || "Apps";
+      document.getElementById('adminDesc').value = app.desc || "";
+      document.getElementById('adminDownloadLink').value = app.downloadLink && app.downloadLink !== "#" ? app.downloadLink : "";
+      document.getElementById('adminDownloads').value = app.totalDownloads || 0;
+
+      toggleJerseyFields();
+
+      iconBase64 = app.icon || "";
+      document.getElementById('iconPreview').innerHTML = app.icon ? `<img src="${app.icon}" class="preview">` : '';
+
+      screenshotBase64s = [...(app.screenshots || [])];
+      const ssPreview = document.getElementById('screenshotPreview');
+      ssPreview.innerHTML = '';
+      screenshotBase64s.forEach(src => {
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        item.innerHTML = `<img src="\( {src}" class="preview"><button class="remove-btn" onclick="removeScreenshot(this, ' \){src}')">×</button>`;
+        ssPreview.appendChild(item);
+      });
+
+      if (app.category === "Jerseys") {
+        document.getElementById('adminPrice').value = app.price || "";
+        document.getElementById('adminSize').value = app.size || "";
+        document.getElementById('adminColor').value = app.color || "";
+        document.getElementById('adminStock').value = app.stock || "";
+      } else {
+        document.getElementById('adminPackage').value = app.packageName || "";
+        document.getElementById('adminVersion').value = app.version || "";
+        document.getElementById('adminBuild').value = app.buildNumber || "";
+        document.getElementById('adminDev').value = app.dev || "";
+        document.getElementById('adminContact').value = app.contact || "";
+      }
+
       document.querySelector('.admin-form').scrollIntoView({ behavior: "smooth" });
     }
 
     function clearAdminForm() {
-      // ... (your existing clear form code)
       editingId = null;
       iconBase64 = '';
       screenshotBase64s = [];
-      // reset fields...
+
       document.getElementById('formTitle').textContent = "Add New Item";
       document.getElementById('saveBtn').textContent = "Save as Pending";
-      document.getElementById('errorMsg').textContent = '';
-    }
 
-    function clearAllData() {
-      if (confirm("This will delete ALL apps/jerseys and free up storage space. Continue?")) {
-        localStorage.removeItem('storeApps');
-        apps = [];
-        loadAdminTable();
-        alert("All data cleared! You can now add new items.");
-      }
+      document.getElementById('iconPreview').innerHTML = '';
+      document.getElementById('screenshotPreview').innerHTML = '';
+      document.getElementById('iconUpload').value = '';
+      document.getElementById('screenshotUpload').value = '';
+
+      const fields = ['adminTitle','adminPackage','adminVersion','adminBuild','adminDev','adminContact',
+                      'adminDesc','adminDownloadLink','adminDownloads','adminPrice','adminSize','adminColor','adminStock'];
+      fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = ['adminDownloads','adminStock','adminPrice'].includes(id) ? '0' : '';
+      });
+
+      document.getElementById('adminCategory').value = 'Games';
+      toggleJerseyFields();
     }
 
     // Initialize
     window.onload = () => {
-      loadFromStorage();
       loadAdminTable();
       toggleJerseyFields();
     };
