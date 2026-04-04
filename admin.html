@@ -127,6 +127,19 @@
       color: var(--text-light);
     }
     td { border-top: 1px solid #eee; }
+
+    .downloads {
+      background: #e8f0fe;
+      color: #1a73e8;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     .action-btn {
       padding: 6px 12px;
       margin-right: 6px;
@@ -200,6 +213,13 @@
         <div class="form-group"><label>Build Number</label><input type="text" id="adminBuild" placeholder="241003"></div>
         <div class="form-group"><label>Developer</label><input type="text" id="adminDev" placeholder="Developer Name"></div>
         <div class="form-group"><label>Contact Email</label><input type="text" id="adminContact" placeholder="dev@example.com"></div>
+        
+        <!-- New Total Downloads Field -->
+        <div class="form-group">
+          <label>Total Downloads</label>
+          <input type="number" id="adminDownloads" placeholder="0" min="0" value="0">
+          <small style="color:#666;">Initial or current download count</small>
+        </div>
       </div>
 
       <div class="form-group">
@@ -221,6 +241,7 @@
           <th>Icon</th>
           <th>Title</th>
           <th>Category</th>
+          <th>Downloads</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -239,7 +260,7 @@
     let apps = JSON.parse(localStorage.getItem('storeApps')) || [];
     let iconBase64 = '';
     let screenshotBase64s = [];
-    let editingId = null;   // null = adding new, number = editing
+    let editingId = null;
 
     function saveToStorage() {
       localStorage.setItem('storeApps', JSON.stringify(apps));
@@ -304,18 +325,16 @@
         contact: document.getElementById('adminContact').value || "contact@example.com",
         desc: document.getElementById('adminDesc').value || "",
         downloadLink: document.getElementById('adminDownloadLink').value.trim() || "#",
+        totalDownloads: parseInt(document.getElementById('adminDownloads').value) || 0
       };
 
       if (editingId !== null) {
-        // Update existing app
         const app = apps.find(a => a.id === editingId);
         if (app) {
           Object.assign(app, appData);
-          // Keep original status
           alert("App updated successfully!");
         }
       } else {
-        // Add new app
         appData.id = Date.now();
         appData.status = "pending";
         apps.push(appData);
@@ -336,6 +355,11 @@
           <td><img src="${app.icon}" width="48" height="48" style="border-radius:8px;" onerror="this.src='https://picsum.photos/id/237/512/512'"></td>
           <td>${app.title}</td>
           <td>${app.category}</td>
+          <td>
+            <span class="downloads">
+              <strong>${app.totalDownloads || 0}</strong> downloads
+            </span>
+          </td>
           <td>
             <span class="status ${app.status === 'approved' ? 'status-approved' : 'status-pending'}">
               ${app.status === 'approved' ? 'Approved' : 'Pending'}
@@ -358,7 +382,6 @@
 
       editingId = app.id;
 
-      // Fill form
       document.getElementById('formTitle').textContent = "Edit App";
       document.getElementById('saveBtn').textContent = "Update App";
 
@@ -371,6 +394,9 @@
       document.getElementById('adminContact').value = app.contact || "";
       document.getElementById('adminDesc').value = app.desc || "";
       document.getElementById('adminDownloadLink').value = app.downloadLink && app.downloadLink !== "#" ? app.downloadLink : "";
+      
+      // New Downloads field
+      document.getElementById('adminDownloads').value = app.totalDownloads || 0;
 
       // Icon preview
       iconBase64 = app.icon;
@@ -381,7 +407,7 @@
       screenshotBase64s = [...(app.screenshots || [])];
       const ssPreview = document.getElementById('screenshotPreview');
       ssPreview.innerHTML = '';
-      screenshotBase64s.forEach((src, i) => {
+      screenshotBase64s.forEach(src => {
         const item = document.createElement('div');
         item.className = 'preview-item';
         item.innerHTML = `
@@ -391,7 +417,6 @@
         ssPreview.appendChild(item);
       });
 
-      // Scroll to form
       document.querySelector('.admin-form').scrollIntoView({ behavior: "smooth" });
     }
 
@@ -408,7 +433,6 @@
         apps.splice(index, 1);
         saveToStorage();
         loadAdminTable();
-        if (editingId === apps[index]?.id) clearAdminForm(); // if editing deleted item
       }
     }
 
@@ -425,10 +449,10 @@
       document.getElementById('iconUpload').value = '';
       document.getElementById('screenshotUpload').value = '';
 
-      const fields = ['adminTitle','adminPackage','adminVersion','adminBuild','adminDev','adminContact','adminDesc','adminDownloadLink'];
+      const fields = ['adminTitle','adminPackage','adminVersion','adminBuild','adminDev','adminContact','adminDesc','adminDownloadLink','adminDownloads'];
       fields.forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.value = '';
+        if (el) el.value = id === 'adminDownloads' ? '0' : '';
       });
     }
 
