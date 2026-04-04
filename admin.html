@@ -187,23 +187,25 @@
           </select>
         </div>
 
-        <!-- Icon & Screenshots -->
+        <!-- Icon -->
         <div class="form-group">
           <label>Icon</label>
           <input type="file" id="iconUpload" accept="image/*" class="file-input" onchange="previewIcon(this)">
           <div id="iconPreview" class="preview-container"></div>
         </div>
+
+        <!-- Screenshots -->
         <div class="form-group">
           <label>Screenshots (multiple)</label>
           <input type="file" id="screenshotUpload" accept="image/*" multiple class="file-input" onchange="previewScreenshots(this)">
           <div id="screenshotPreview" class="preview-container"></div>
         </div>
 
-        <!-- Common Download Link -->
+        <!-- Download Link -->
         <div class="form-group" style="grid-column: 1 / -1;">
           <label>Direct Download / Buy Now URL</label>
           <input type="url" id="adminDownloadLink" placeholder="https://example.com/file.apk or buy link" style="font-family:monospace;">
-          <small style="color:#666;">APK for apps • Buy/Whatsapp/Payment link for jerseys</small>
+          <small style="color:#666;">APK for apps/games • Buy/Whatsapp link for jerseys</small>
         </div>
 
         <!-- App/Game fields -->
@@ -295,9 +297,13 @@
         reader.onload = e => {
           const base64 = e.target.result;
           screenshotBase64s.push(base64);
+
           const item = document.createElement('div');
           item.className = 'preview-item';
-          item.innerHTML = `<img src="\( {base64}" class="preview"><button class="remove-btn" onclick="removeScreenshot(this, ' \){base64}')">×</button>`;
+          item.innerHTML = `
+            <img src="${base64}" class="preview">
+            <button class="remove-btn" onclick="removeScreenshot(this, '${base64}')">×</button>
+          `;
           container.appendChild(item);
         };
         reader.readAsDataURL(file);
@@ -342,11 +348,13 @@
 
       if (editingId !== null) {
         const index = apps.findIndex(a => a.id === editingId);
-        if (index !== -1) apps[index] = { ...apps[index], ...appData };
-        alert("Item updated successfully!");
+        if (index !== -1) {
+          apps[index] = { ...apps[index], ...appData };
+          alert("Item updated successfully!");
+        }
       } else {
         apps.push(appData);
-        alert(`New ${category} added as Pending.`);
+        alert(`New ${category} added as **Pending**.`);
       }
 
       saveToStorage();
@@ -365,7 +373,9 @@
           <td>${app.title}</td>
           <td>${app.category}</td>
           <td><span class="downloads"><strong>${app.totalDownloads || 0}</strong> ${app.category === "Jerseys" ? "sold" : "downloads"}</span></td>
-          <td><span class="status \( {app.status === 'approved' ? 'status-approved' : 'status-pending'}"> \){app.status === 'approved' ? 'Approved' : 'Pending'}</span></td>
+          <td><span class="status ${app.status === 'approved' ? 'status-approved' : 'status-pending'}">
+            ${app.status === 'approved' ? 'Approved' : 'Pending'}
+          </span></td>
           <td>
             <button class="btn btn-warning action-btn" onclick="editApp(${index})">Edit</button>
             ${app.status !== 'approved' ? 
@@ -377,7 +387,6 @@
       });
     }
 
-    // Fixed: Now using stable ID instead of changing index
     function approveApp(id) {
       if (confirm("Approve this item? It will now appear in the main store.")) {
         const app = apps.find(a => a.id === id);
@@ -405,7 +414,6 @@
       document.getElementById('formTitle').textContent = `Edit ${app.category}`;
       document.getElementById('saveBtn').textContent = "Update Item";
 
-      // Fill form fields (same as before)
       document.getElementById('adminTitle').value = app.title || "";
       document.getElementById('adminCategory').value = app.category || "Apps";
       document.getElementById('adminDesc').value = app.desc || "";
@@ -414,16 +422,21 @@
 
       toggleJerseyFields();
 
+      // Icon preview
       iconBase64 = app.icon || "";
       document.getElementById('iconPreview').innerHTML = app.icon ? `<img src="${app.icon}" class="preview">` : '';
 
+      // Screenshots preview
       screenshotBase64s = [...(app.screenshots || [])];
       const ssPreview = document.getElementById('screenshotPreview');
       ssPreview.innerHTML = '';
       screenshotBase64s.forEach(src => {
         const item = document.createElement('div');
         item.className = 'preview-item';
-        item.innerHTML = `<img src="\( {src}" class="preview"><button class="remove-btn" onclick="removeScreenshot(this, ' \){src}')">×</button>`;
+        item.innerHTML = `
+          <img src="${src}" class="preview">
+          <button class="remove-btn" onclick="removeScreenshot(this, '${src}')">×</button>
+        `;
         ssPreview.appendChild(item);
       });
 

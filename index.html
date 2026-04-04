@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DREAM Store - App & Game Store</title>
+  <title>MyStore - App & Game Store</title>
   <style>
     :root {
       --primary: #4285f4;
-      --success: #34a853;
       --text: #202124;
       --text-light: #5f6368;
       --bg: #f8f9fa;
@@ -21,7 +20,6 @@
       color: var(--text);
       line-height: 1.5;
     }
-
     header {
       background: white;
       box-shadow: 0 1px 4px rgba(0,0,0,0.1);
@@ -29,20 +27,17 @@
       top: 0;
       z-index: 100;
     }
-
     .top-nav {
       display: flex;
       align-items: center;
       padding: 12px 20px;
       gap: 16px;
     }
-
     .logo {
       font-size: 24px;
       font-weight: 500;
       color: var(--primary);
     }
-
     .search-bar {
       flex: 1;
       max-width: 600px;
@@ -52,19 +47,16 @@
       font-size: 16px;
       outline: none;
     }
-
     .search-bar:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 2px rgba(66,133,244,0.2);
     }
-
     .tabs {
       display: flex;
       background: white;
       border-bottom: 1px solid #dadce0;
       padding: 0 10px;
     }
-
     .tab {
       padding: 14px 24px;
       font-size: 15px;
@@ -72,9 +64,7 @@
       color: var(--text-light);
       cursor: pointer;
       border-bottom: 3px solid transparent;
-      transition: all 0.2s ease;
     }
-
     .tab.active {
       color: var(--primary);
       border-bottom: 3px solid var(--primary);
@@ -90,7 +80,6 @@
       text-align: center;
       margin-bottom: 32px;
     }
-
     .banner h1 { font-size: 28px; margin-bottom: 8px; }
 
     .section-title {
@@ -105,7 +94,6 @@
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 20px;
     }
-
     .app-card {
       background: var(--card);
       border-radius: 16px;
@@ -114,12 +102,10 @@
       transition: all 0.3s ease;
       cursor: pointer;
     }
-
     .app-card:hover {
       transform: translateY(-6px);
       box-shadow: 0 8px 20px rgba(0,0,0,0.12);
     }
-
     .app-icon {
       width: 100%;
       height: 160px;
@@ -127,64 +113,37 @@
       padding: 20px 20px 10px;
       background: #f8f9fa;
     }
-
     .app-info {
       padding: 12px 16px;
     }
-
     .app-title {
       font-weight: 500;
       font-size: 15px;
       margin-bottom: 4px;
     }
-
     .app-dev {
       font-size: 13px;
       color: var(--text-light);
     }
 
-    /* ==================== MODAL ANIMATION ==================== */
+    /* Detail Modal */
     .modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.75);
+      background: rgba(0,0,0,0.6);
       align-items: center;
       justify-content: center;
       z-index: 1000;
-      animation: fadeIn 0.3s ease forwards;
     }
-
     .modal-content {
       background: white;
       width: 95%;
       max-width: 680px;
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      max-height: 92vh;
-      overflow-y: auto;
-      animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-      transform: scale(0.7);
-      opacity: 0;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
     }
-
-    @keyframes fadeIn {
-      from { background: rgba(0,0,0,0); }
-      to { background: rgba(0,0,0,0.75); }
-    }
-
-    @keyframes modalPop {
-      from {
-        transform: scale(0.7) translateY(40px);
-        opacity: 0;
-      }
-      to {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-      }
-    }
-
     .modal-header {
       padding: 20px 24px;
       background: var(--primary);
@@ -192,22 +151,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 10;
     }
-
-    .modal-header span {
-      font-size: 28px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: transform 0.2s;
-    }
-
-    .modal-header span:hover {
-      transform: rotate(90deg);
-    }
-
     .screenshots {
       display: flex;
       overflow-x: auto;
@@ -215,7 +159,6 @@
       padding: 20px;
       background: #f8f9fa;
     }
-
     .screenshot {
       width: 240px;
       height: 420px;
@@ -223,86 +166,6 @@
       border-radius: 12px;
       flex-shrink: 0;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .detail-info {
-      padding: 24px;
-    }
-
-    .detail-info .info-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 20px;
-      font-size: 14px;
-    }
-
-    /* ==================== ENHANCED BUTTON STYLING ==================== */
-    .download-btn, .contact-btn {
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 12px;
-      font-size: 17px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin: 12px 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .download-btn {
-      background: linear-gradient(135deg, #34a853, #2e8b57);
-      color: white;
-      box-shadow: 0 4px 12px rgba(52, 168, 83, 0.3);
-    }
-
-    .download-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(52, 168, 83, 0.4);
-      background: linear-gradient(135deg, #2e8b57, #34a853);
-    }
-
-    .download-btn:active {
-      transform: scale(0.97);
-    }
-
-    .contact-btn {
-      background: linear-gradient(135deg, #4285f4, #1a73e8);
-      color: white;
-      box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
-    }
-
-    .contact-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(66, 133, 244, 0.4);
-    }
-
-    .contact-btn:active {
-      transform: scale(0.97);
-    }
-
-    /* Loading animation for download button */
-    .download-btn.loading {
-      pointer-events: none;
-      background: #666;
-    }
-
-    .download-btn.loading::after {
-      content: '';
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
     }
 
     footer {
@@ -313,16 +176,14 @@
       font-size: 13px;
       margin-top: 40px;
     }
-
     footer a { color: #8ab4f8; text-decoration: none; }
   </style>
 </head>
 <body>
 
-  <!-- Your existing HTML structure remains the same -->
   <header>
     <div class="top-nav">
-      <div class="logo">Dream Store</div>
+      <div class="logo">MyStore</div>
       <input type="text" id="searchInput" class="search-bar" placeholder="Search apps, games..." onkeyup="searchApps()" />
     </div>
     <div class="tabs">
@@ -330,10 +191,10 @@
       <div class="tab" onclick="switchTab(1)">Games</div>
       <div class="tab" onclick="switchTab(2)">Apps</div>
       <div class="tab" onclick="switchTab(3)">Jerseys</div>
-    </div>
+      </div>
   </header>
 
-  <!-- Home Page -->
+  <!-- Home -->
   <div class="container" id="homePage">
     <div class="banner">
       <h1>Discover the Best Apps & Games</h1>
@@ -349,7 +210,7 @@
     <div class="section-title">Trending Apps</div>
     <div class="app-grid" id="appsGrid"></div>
 
-    <div class="section-title">Jerseys & Merch</div>
+    <div class="section-title">Jerseys</div>
     <div class="app-grid" id="jerseysGrid"></div>
   </div>
 
@@ -358,9 +219,8 @@
     <div class="modal-content">
       <div class="modal-header">
         <div id="modalTitle" style="font-size:20px;font-weight:500;"></div>
-        <span onclick="closeModal()">×</span>
+        <span onclick="closeModal()" style="font-size:28px;cursor:pointer;">×</span>
       </div>
-      
       <div style="padding:24px;display:flex;align-items:center;gap:16px;">
         <img id="modalIcon" style="width:92px;height:92px;border-radius:20px;box-shadow:0 4px 12px rgba(0,0,0,0.1);" />
         <div>
@@ -368,20 +228,18 @@
           <p id="modalPackage" style="margin:6px 0 0;color:var(--text-light);font-size:14px;"></p>
         </div>
       </div>
-
       <div class="screenshots" id="modalScreenshots"></div>
-
-      <div class="detail-info">
-        <div class="info-row">
+      <div style="padding:24px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;font-size:14px;">
           <div><strong>Version:</strong> <span id="modalVersion"></span></div>
           <div><strong>Build:</strong> <span id="modalBuild"></span></div>
         </div>
-        <p id="modalDesc" style="margin-bottom:24px;color:var(--text-light); line-height:1.6;"></p>
+        <p id="modalDesc" style="margin-bottom:24px;color:var(--text-light);"></p>
         
-        <button onclick="downloadApp(this)" id="downloadBtn" class="download-btn">
+        <button onclick="downloadApp()" class="btn btn-primary" style="width:100%;padding:16px;font-size:17px;">
           ⬇️ Download APK
         </button>
-        <button onclick="contactDev()" class="contact-btn">
+        <button onclick="contactDev()" class="btn" style="width:100%;margin-top:12px;background:#34a853;color:white;">
           ✉️ Contact Developer
         </button>
       </div>
@@ -396,9 +254,11 @@
   </footer>
 
   <script>
+    // Load all apps from localStorage (shared with admin.html)
     let apps = JSON.parse(localStorage.getItem('storeApps')) || [];
     let currentApp = null;
 
+    // Only show approved apps in the store
     function getApprovedApps() {
       return apps.filter(app => app.status === "approved");
     }
@@ -440,65 +300,42 @@
         ssContainer.appendChild(img);
       });
 
-      // Reset download button
-      const downloadBtn = document.getElementById('downloadBtn');
-      downloadBtn.classList.remove('loading');
-      downloadBtn.innerHTML = '⬇️ Download APK';
-
       document.getElementById('detailModal').style.display = 'flex';
     }
 
-    function closeModal() {
-      document.getElementById('detailModal').style.display = 'none';
+    function closeModal() { 
+      document.getElementById('detailModal').style.display = 'none'; 
     }
 
-    function downloadApp(btn) {
-      if (!currentApp || !currentApp.downloadLink || currentApp.downloadLink === "#") {
-        alert("Download link not available for this app.");
-        return;
-      }
-
-      // Add loading animation
-      btn.classList.add('loading');
-      btn.innerHTML = 'Downloading...';
-
-      // Simulate download delay
-      setTimeout(() => {
+    function downloadApp() {
+      if (currentApp && currentApp.downloadLink) {
         window.open(currentApp.downloadLink, '_blank');
-        
-        // Reset button after download starts
-        setTimeout(() => {
-          btn.classList.remove('loading');
-          btn.innerHTML = '⬇️ Download APK';
-        }, 1500);
-      }, 1200);
+      } else {
+        alert("Download link not available.");
+      }
     }
 
     function contactDev() {
-      if (currentApp && currentApp.contact) {
-        window.location.href = `mailto:${currentApp.contact}`;
-      } else {
-        alert("Contact information not available.");
-      }
+      if (currentApp) window.location.href = `mailto:${currentApp.contact}`;
     }
 
     function switchTab(tab) {
       document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === tab));
 
-      const approved = getApprovedApps();
-      let filtered = approved;
-
-      if (tab === 1) filtered = approved.filter(a => a.category === 'Games');
-      if (tab === 2) filtered = approved.filter(a => a.category === 'Apps');
-      if (tab === 3) filtered = approved.filter(a => a.category === 'Jerseys');
-
-      renderApps('featuredGrid', filtered);
+      if (tab === 0) renderAll();
+      else {
+        const approved = getApprovedApps();
+        let filtered = approved;
+        if (tab === 1) filtered = approved.filter(a => a.category === 'Games');
+        if (tab === 2) filtered = approved.filter(a => a.category === 'Apps');
+        if (tab === 3) filtered = approved.filter(a => a.category === 'Jerseys');
+        renderApps('featuredGrid', filtered);
+      }
     }
 
     function searchApps() {
       const query = document.getElementById('searchInput').value.toLowerCase().trim();
       if (!query) return renderAll();
-      
       const approved = getApprovedApps();
       const filtered = approved.filter(a => 
         a.title.toLowerCase().includes(query) || 
@@ -515,6 +352,7 @@
       renderApps('jerseysGrid', approved.filter(a => a.category === 'Jerseys'));
     }
 
+    // Initialize - load only approved apps
     window.onload = renderAll;
   </script>
 </body>
