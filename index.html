@@ -1,359 +1,382 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dream Store - App & Game Store</title>
-  <style>
-    :root {
-      --primary: #4285f4;
-      --text: #202124;
-      --text-light: #5f6368;
-      --bg: #f8f9fa;
-      --card: #ffffff;
-    }
-    
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Google Sans', system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-    }
-    header {
-      background: white;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .top-nav {
-      display: flex;
-      align-items: center;
-      padding: 12px 20px;
-      gap: 16px;
-    }
-    .logo {
-      font-size: 24px;
-      font-weight: 500;
-      color: var(--primary);
-    }
-    .search-bar {
-      flex: 1;
-      max-width: 600px;
-      padding: 12px 20px;
-      border: 1px solid #dadce0;
-      border-radius: 50px;
-      font-size: 16px;
-      outline: none;
-    }
-    .search-bar:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(66,133,244,0.2);
-    }
-    .tabs {
-      display: flex;
-      background: white;
-      border-bottom: 1px solid #dadce0;
-      padding: 0 10px;
-    }
-    .tab {
-      padding: 14px 24px;
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--text-light);
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-    }
-    .tab.active {
-      color: var(--primary);
-      border-bottom: 3px solid var(--primary);
-    }
-
-    .container { padding: 24px 20px; max-width: 1400px; margin: 0 auto; }
-
-    .banner {
-      background: linear-gradient(135deg, #4285f4, #34a853);
-      color: white;
-      padding: 32px 24px;
-      border-radius: 16px;
-      text-align: center;
-      margin-bottom: 32px;
-    }
-    .banner h1 { font-size: 28px; margin-bottom: 8px; }
-
-    .section-title {
-      font-size: 20px;
-      font-weight: 500;
-      margin: 32px 0 16px;
-      color: var(--text);
-    }
-
-    .app-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 20px;
-    }
-    .app-card {
-      background: var(--card);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-    .app-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-    }
-    .app-icon {
-      width: 100%;
-      height: 160px;
-      object-fit: contain;
-      padding: 20px 20px 10px;
-      background: #f8f9fa;
-    }
-    .app-info {
-      padding: 12px 16px;
-    }
-    .app-title {
-      font-weight: 500;
-      font-size: 15px;
-      margin-bottom: 4px;
-    }
-    .app-dev {
-      font-size: 13px;
-      color: var(--text-light);
-    }
-
-    /* Detail Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-    .modal-content {
-      background: white;
-      width: 95%;
-      max-width: 680px;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-    }
-    .modal-header {
-      padding: 20px 24px;
-      background: var(--primary);
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .screenshots {
-      display: flex;
-      overflow-x: auto;
-      gap: 12px;
-      padding: 20px;
-      background: #f8f9fa;
-    }
-    .screenshot {
-      width: 240px;
-      height: 420px;
-      object-fit: cover;
-      border-radius: 12px;
-      flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    footer {
-      background: #202124;
-      color: #9aa0a6;
-      text-align: center;
-      padding: 25px 15px;
-      font-size: 13px;
-      margin-top: 40px;
-    }
-    footer a { color: #8ab4f8; text-decoration: none; }
-  </style>
-</head>
-<body>
-
-  <header>
-    <div class="top-nav">
-      <div class="logo">Dream Store</div>
-      <input type="text" id="searchInput" class="search-bar" placeholder="Search apps, games..." onkeyup="searchApps()" />
-    </div>
-    <div class="tabs">
-      <div class="tab active" onclick="switchTab(0)">Home</div>
-      <div class="tab" onclick="switchTab(1)">Games</div>
-      <div class="tab" onclick="switchTab(2)">Apps</div>
-      <div class="tab" onclick="switchTab(3)">Jerseys</div>
-      </div>
-  </header>
-
-  <!-- Home -->
-  <div class="container" id="homePage">
-    <div class="banner">
-      <h1>Discover the Best Apps & Games</h1>
-      <p>Fast, safe and free downloads</p>
-    </div>
-
-    <div class="section-title">Featured</div>
-    <div class="app-grid" id="featuredGrid"></div>
-
-    <div class="section-title">Popular Games</div>
-    <div class="app-grid" id="gamesGrid"></div>
-
-    <div class="section-title">Trending Apps</div>
-    <div class="app-grid" id="appsGrid"></div>
-
-    <div class="section-title">Jerseys</div>
-    <div class="app-grid" id="jerseysGrid"></div>
-  </div>
-
-  <!-- Detail Modal -->
-  <div class="modal" id="detailModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div id="modalTitle" style="font-size:20px;font-weight:500;"></div>
-        <span onclick="closeModal()" style="font-size:28px;cursor:pointer;">×</span>
-      </div>
-      <div style="padding:24px;display:flex;align-items:center;gap:16px;">
-        <img id="modalIcon" style="width:92px;height:92px;border-radius:20px;box-shadow:0 4px 12px rgba(0,0,0,0.1);" />
-        <div>
-          <h3 id="modalDev" style="margin:0;"></h3>
-          <p id="modalPackage" style="margin:6px 0 0;color:var(--text-light);font-size:14px;"></p>
-        </div>
-      </div>
-      <div class="screenshots" id="modalScreenshots"></div>
-      <div style="padding:24px;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;font-size:14px;">
-          <div><strong>Version:</strong> <span id="modalVersion"></span></div>
-          <div><strong>Build:</strong> <span id="modalBuild"></span></div>
-        </div>
-        <p id="modalDesc" style="margin-bottom:24px;color:var(--text-light);"></p>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlayStore Things • App Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
         
-        <button onclick="downloadApp()" class="btn btn-primary" style="width:100%;padding:16px;font-size:17px;">
-          ⬇️ Download APK
-        </button>
-        <button onclick="contactDev()" class="btn" style="width:100%;margin-top:12px;background:#34a853;color:white;">
-          ✉️ Contact Developer
-        </button>
-      </div>
+        * { font-family: 'Roboto', sans-serif; }
+        
+        .playstore-header {
+            background: linear-gradient(90deg, #00a8e8, #4285f4);
+        }
+        
+        .app-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .app-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+        
+        .modal {
+            animation: modalPop 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes modalPop {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- HEADER -->
+    <header class="playstore-header text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-3xl font-bold text-[#00a8e8]">▶</div>
+                <div class="text-2xl font-bold tracking-tight">PlayStore <span class="text-white/80 text-lg">Things</span></div>
+            </div>
+
+            <div class="flex-1 max-w-xl mx-8">
+                <div class="relative">
+                    <input id="search-input" 
+                           type="text" 
+                           placeholder="Search apps, games, jerseys..." 
+                           class="w-full bg-white text-gray-900 rounded-full py-3 px-6 pl-12 focus:outline-none"
+                           onkeyup="if(event.key==='Enter') performSearch()">
+                    <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <button onclick="toggleFilterPanel()" class="flex items-center gap-2 bg-white/20 px-5 py-2 rounded-full hover:bg-white/30">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+                <button onclick="window.location.href='admin.html'" 
+                        class="flex items-center gap-2 bg-white text-[#00a8e8] px-6 py-2 rounded-full font-semibold hover:bg-gray-100">
+                    <i class="fas fa-crown"></i> Admin Panel
+                </button>
+                <div class="flex items-center gap-3 cursor-pointer" onclick="fakeProfileClick()">
+                    <div class="text-right text-sm">
+                        <p class="font-medium">True</p>
+                        <p class="text-xs text-white/70">Chanduasi, UP</p>
+                    </div>
+                    <div class="w-9 h-9 bg-white rounded-2xl flex items-center justify-center text-[#00a8e8]">👤</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary Navigation -->
+        <div class="max-w-7xl mx-auto px-6 pb-4 flex gap-8 text-sm font-medium overflow-x-auto">
+            <a onclick="setCategoryFilter('all')" class="cursor-pointer hover:text-white/80 active-category">For you</a>
+            <a onclick="setCategoryFilter('games')" class="cursor-pointer hover:text-white/80">Games</a>
+            <a onclick="setCategoryFilter('apps')" class="cursor-pointer hover:text-white/80">Apps</a>
+            <a onclick="setCategoryFilter('jerseys')" class="cursor-pointer hover:text-white/80">Jerseys</a>
+            <a onclick="setCategoryFilter('tools')" class="cursor-pointer hover:text-white/80">Tools & Things</a>
+            <div onclick="switchView('download')" class="ml-auto cursor-pointer flex items-center gap-2 hover:text-white/80">
+                <i class="fas fa-download"></i> My Downloads
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+
+        <!-- HOME VIEW -->
+        <div id="home-view">
+            <!-- Featured -->
+            <div onclick="installFeatured()" 
+                 class="bg-gradient-to-r from-[#00a8e8] to-[#4285f4] text-white rounded-3xl p-8 mb-8 flex gap-8 items-center cursor-pointer hover:scale-[1.01] transition">
+                <div class="flex-1">
+                    <div class="inline-flex bg-white/20 text-xs px-4 py-1 rounded-full mb-3">NEW</div>
+                    <h1 class="text-4xl font-bold leading-none">Jersey Designer Pro</h1>
+                    <p class="text-lg mt-3 opacity-90">Design custom jerseys and sync with smart wearables</p>
+                    <button class="mt-6 bg-white text-[#00a8e8] font-semibold px-8 py-3 rounded-3xl flex items-center gap-3">
+                        <i class="fas fa-download"></i> Install Free
+                    </button>
+                </div>
+                <img src="https://picsum.photos/id/237/420/280" class="hidden md:block rounded-3xl shadow-2xl" alt="featured">
+            </div>
+
+            <h2 id="results-title" class="text-2xl font-semibold mb-6">Popular Apps & Things</h2>
+            
+            <div id="apps-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                <!-- JS populated -->
+            </div>
+        </div>
+
+        <!-- DOWNLOADS VIEW -->
+        <div id="download-view" class="hidden">
+            <div class="flex items-center justify-between mb-8">
+                <button onclick="switchView('home')" class="flex items-center gap-2 text-[#00a8e8] font-medium">
+                    <i class="fas fa-arrow-left"></i> Back to Store
+                </button>
+                <h1 class="text-3xl font-semibold">My Downloads</h1>
+            </div>
+            
+            <div id="downloads-list" class="space-y-6"></div>
+            
+            <div id="no-downloads" class="hidden text-center py-20">
+                <i class="fas fa-download text-7xl text-gray-200 mb-6"></i>
+                <p class="text-2xl font-medium text-gray-400">No downloads yet</p>
+                <p class="text-gray-500 mt-2">Download some apps from the store</p>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- Footer -->
-  <footer>
-    <div>Contact: <a href="mailto:dreammods145@gmail.com">dreammods145@gmail.com</a></div>
-    <div>Copyright © 2026-2027 MyStore. All Rights Reserved.</div>
-    <div>Web made by <strong>dream X YASH Mods</strong></div>
-  </footer>
+    <!-- APP DETAIL MODAL -->
+    <div id="app-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+        <div class="modal bg-white max-w-2xl w-full mx-4 rounded-3xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-6 flex items-center gap-5 border-b">
+                <div id="modal-icon" class="w-20 h-20 rounded-3xl"></div>
+                <div class="flex-1">
+                    <h2 id="modal-name" class="text-2xl font-bold"></h2>
+                    <p id="modal-developer" class="text-gray-500"></p>
+                </div>
+                <button onclick="hideModal()" class="text-3xl text-gray-400 hover:text-gray-600">×</button>
+            </div>
+            
+            <div class="flex-1 overflow-auto p-6">
+                <div id="modal-screenshots" class="flex gap-4 overflow-x-auto pb-6"></div>
+                <p id="modal-desc" class="mt-6 text-gray-700 leading-relaxed"></p>
+                
+                <div class="mt-10">
+                    <h3 class="font-semibold mb-4">User Reviews</h3>
+                    <div id="reviews-list" class="space-y-6"></div>
+                </div>
+            </div>
+            
+            <div class="p-6 border-t flex gap-4">
+                <button onclick="startDownloadFromModal()" 
+                        class="flex-1 bg-[#00a8e8] text-white py-5 rounded-3xl font-semibold text-lg flex items-center justify-center gap-3">
+                    <i class="fas fa-download"></i> Download & Install
+                </button>
+                <button onclick="copyRealDownloadLink()" 
+                        class="flex items-center justify-center gap-2 border border-gray-300 hover:bg-gray-50 px-8 rounded-3xl font-medium">
+                    <i class="fas fa-link"></i> Get APK Link
+                </button>
+            </div>
+        </div>
+    </div>
 
-  <script>
-    // Load all apps from localStorage (shared with admin.html)
-    let apps = JSON.parse(localStorage.getItem('storeApps')) || [];
-    let currentApp = null;
+    <!-- Toast -->
+    <div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-4 rounded-3xl shadow-2xl z-[200]">
+        <span id="toast-text"></span>
+    </div>
 
-    // Only show approved apps in the store
-    function getApprovedApps() {
-      return apps.filter(app => app.status === "approved");
-    }
+    <script>
+        let appsDB = JSON.parse(localStorage.getItem('playstoreApps')) || [
+            {
+                id: 1,
+                name: "Smart Lamp Controller",
+                category: "tools",
+                icon: "https://picsum.photos/id/1016/200/200",
+                screenshots: ["https://picsum.photos/id/20/800/450", "https://picsum.photos/id/201/800/450"],
+                desc: "Control your smart lights with AI automation and scheduling.",
+                rating: 4.9,
+                downloadUrl: "https://playstore.things/apk/smart-lamp-controller-v2.4.apk",
+                size: "32 MB",
+                reviews: [
+                    {user: "Rahul S.", rating: 5, text: "Best smart home app ever!"},
+                    {user: "Priya M.", rating: 4, text: "Great UI but occasional lag."}
+                ]
+            },
+            {
+                id: 2,
+                name: "Epic Things Runner",
+                category: "games",
+                icon: "https://picsum.photos/id/201/200/200",
+                screenshots: ["https://picsum.photos/id/251/800/450"],
+                desc: "Exciting endless runner through smart home gadgets.",
+                rating: 4.5,
+                downloadUrl: "https://playstore.things/apk/epic-things-runner-v1.8.apk",
+                size: "145 MB",
+                reviews: [{user: "Amit K.", rating: 5, text: "Super addictive!"}]
+            },
+            {
+                id: 3,
+                name: "Jersey Designer Pro",
+                category: "jerseys",
+                icon: "https://picsum.photos/id/237/200/200",
+                screenshots: ["https://picsum.photos/id/1005/800/450"],
+                desc: "Design and preview custom jerseys with AR support.",
+                rating: 4.9,
+                downloadUrl: "https://playstore.things/apk/jersey-designer-pro-v3.1.apk",
+                size: "68 MB",
+                reviews: [{user: "Sneha P.", rating: 5, text: "Amazing AR preview!"}]
+            },
+            {
+                id: 4,
+                name: "Utility Master",
+                category: "apps",
+                icon: "https://picsum.photos/id/160/200/200",
+                screenshots: ["https://picsum.photos/id/160/800/450"],
+                desc: "All-in-one utility toolkit for your phone.",
+                rating: 4.6,
+                downloadUrl: "https://playstore.things/apk/utility-master-v2.0.apk",
+                size: "55 MB",
+                reviews: []
+            }
+        ];
 
-    function renderApps(containerId, filteredApps) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = '';
-      filteredApps.forEach(app => {
-        const card = document.createElement('div');
-        card.className = 'app-card';
-        card.innerHTML = `
-          <img src="${app.icon}" class="app-icon" onerror="this.src='https://picsum.photos/id/237/512/512'">
-          <div class="app-info">
-            <div class="app-title">${app.title}</div>
-            <div class="app-dev">${app.dev}</div>
-          </div>
-        `;
-        card.onclick = () => showDetail(app);
-        container.appendChild(card);
-      });
-    }
+        let downloadedApps = [];
+        let currentView = 'home';
 
-    function showDetail(app) {
-      currentApp = app;
-      document.getElementById('modalTitle').textContent = app.title;
-      document.getElementById('modalIcon').src = app.icon;
-      document.getElementById('modalDev').textContent = app.dev;
-      document.getElementById('modalPackage').textContent = app.packageName;
-      document.getElementById('modalVersion').textContent = app.version;
-      document.getElementById('modalBuild').textContent = app.buildNumber;
-      document.getElementById('modalDesc').textContent = app.desc;
+        function renderApps(filteredApps) {
+            const grid = document.getElementById('apps-grid');
+            grid.innerHTML = filteredApps.map(app => `
+                <div onclick="showAppDetail(${app.id})" class="app-card bg-white rounded-3xl overflow-hidden border border-gray-100 cursor-pointer">
+                    <div class="p-4 flex gap-4">
+                        <img src="${app.icon}" class="w-16 h-16 rounded-2xl">
+                        <div class="flex-1">
+                            <p class="font-semibold text-lg leading-tight">${app.name}</p>
+                            <p class="text-xs text-gray-500 mt-1">★ ${app.rating}</p>
+                        </div>
+                    </div>
+                    <div class="px-4 pb-4">
+                        <button onclick="event.stopImmediatePropagation(); quickDownload(${app.id});" 
+                                class="w-full py-3 bg-[#00a8e8] text-white rounded-3xl font-medium">Get</button>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-      const ssContainer = document.getElementById('modalScreenshots');
-      ssContainer.innerHTML = '';
-      app.screenshots.forEach(src => {
-        const img = document.createElement('img');
-        img.src = src;
-        img.className = 'screenshot';
-        ssContainer.appendChild(img);
-      });
+        function showAppDetail(id) {
+            const app = appsDB.find(a => a.id === id);
+            if (!app) return;
 
-      document.getElementById('detailModal').style.display = 'flex';
-    }
+            document.getElementById('modal-icon').innerHTML = `<img src="${app.icon}" class="w-20 h-20 rounded-3xl">`;
+            document.getElementById('modal-name').textContent = app.name;
+            document.getElementById('modal-developer').innerHTML = `★ ${app.rating} • ${app.size || 'Free'}`;
+            document.getElementById('modal-desc').textContent = app.desc;
 
-    function closeModal() { 
-      document.getElementById('detailModal').style.display = 'none'; 
-    }
+            const sc = document.getElementById('modal-screenshots');
+            sc.innerHTML = (app.screenshots || []).map(url => 
+                `<img src="${url}" class="w-72 h-40 object-cover rounded-2xl flex-shrink-0">`
+            ).join('');
 
-    function downloadApp() {
-      if (currentApp && currentApp.downloadLink) {
-        window.open(currentApp.downloadLink, '_blank');
-      } else {
-        alert("Download link not available.");
-      }
-    }
+            const reviewsDiv = document.getElementById('reviews-list');
+            reviewsDiv.innerHTML = (app.reviews || []).map(review => `
+                <div class="bg-gray-50 p-5 rounded-3xl">
+                    <div class="flex items-center justify-between">
+                        <span class="font-medium">${review.user}</span>
+                        <span class="text-amber-400">★ ${review.rating}</span>
+                    </div>
+                    <p class="text-sm mt-3 text-gray-700">${review.text}</p>
+                </div>
+            `).join('') || '<p class="text-gray-400 text-center py-8">No reviews yet</p>';
 
-    function contactDev() {
-      if (currentApp) window.location.href = `mailto:${currentApp.contact}`;
-    }
+            window.currentApp = app;
+            document.getElementById('app-modal').classList.remove('hidden');
+            document.getElementById('app-modal').classList.add('flex');
+        }
 
-    function switchTab(tab) {
-      document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === tab));
+        function hideModal() {
+            const modal = document.getElementById('app-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
 
-      if (tab === 0) renderAll();
-      else {
-        const approved = getApprovedApps();
-        let filtered = approved;
-        if (tab === 1) filtered = approved.filter(a => a.category === 'Games');
-        if (tab === 2) filtered = approved.filter(a => a.category === 'Apps');
-        if (tab === 3) filtered = approved.filter(a => a.category === 'Jerseys');
-        renderApps('featuredGrid', filtered);
-      }
-    }
+        function quickDownload(id) {
+            const app = appsDB.find(a => a.id === id);
+            if (app) startFakeDownload(app);
+            event.stopImmediatePropagation();
+        }
 
-    function searchApps() {
-      const query = document.getElementById('searchInput').value.toLowerCase().trim();
-      if (!query) return renderAll();
-      const approved = getApprovedApps();
-      const filtered = approved.filter(a => 
-        a.title.toLowerCase().includes(query) || 
-        a.dev.toLowerCase().includes(query)
-      );
-      renderApps('featuredGrid', filtered);
-    }
+        function startDownloadFromModal() {
+            if (window.currentApp) {
+                hideModal();
+                startFakeDownload(window.currentApp);
+            }
+        }
 
-    function renderAll() {
-      const approved = getApprovedApps();
-      renderApps('featuredGrid', approved.slice(0, 5));
-      renderApps('gamesGrid', approved.filter(a => a.category === 'Games'));
-      renderApps('appsGrid', approved.filter(a => a.category === 'Apps'));
-      renderApps('jerseysGrid', approved.filter(a => a.category === 'Jerseys'));
-    }
+        function copyRealDownloadLink() {
+            if (window.currentApp) {
+                navigator.clipboard.writeText(window.currentApp.downloadUrl);
+                showToast("✅ APK link copied!");
+                hideModal();
+            }
+        }
 
-    // Initialize - load only approved apps
-    window.onload = renderAll;
-  </script>
+        function startFakeDownload(app) {
+            if (!downloadedApps.find(d => d.id === app.id)) {
+                downloadedApps.unshift(app);
+            }
+            showToast(`Downloading ${app.name}...`);
+            setTimeout(() => switchView('download'), 800);
+        }
+
+        function renderDownloads() {
+            const container = document.getElementById('downloads-list');
+            const noDiv = document.getElementById('no-downloads');
+            
+            if (downloadedApps.length === 0) {
+                noDiv.classList.remove('hidden');
+                container.innerHTML = '';
+                return;
+            }
+            
+            noDiv.classList.add('hidden');
+            container.innerHTML = downloadedApps.map(app => `
+                <div class="bg-white rounded-3xl p-6 flex gap-6 items-center border border-gray-100">
+                    <img src="${app.icon}" class="w-16 h-16 rounded-2xl">
+                    <div class="flex-1">
+                        <p class="font-semibold text-lg">${app.name}</p>
+                        <p class="text-emerald-600 text-sm">${app.size} • Installed</p>
+                    </div>
+                    <a href="${app.downloadUrl}" target="_blank" 
+                       class="bg-[#00a8e8] text-white px-6 py-3 rounded-3xl text-sm font-medium">Download APK</a>
+                </div>
+            `).join('');
+        }
+
+        function performSearch() {
+            const term = document.getElementById('search-input').value.toLowerCase().trim();
+            const filtered = term ? appsDB.filter(app => app.name.toLowerCase().includes(term)) : appsDB;
+            renderApps(filtered);
+        }
+
+        function setCategoryFilter(cat) {
+            const filtered = cat === 'all' ? appsDB : appsDB.filter(app => app.category === cat);
+            renderApps(filtered);
+        }
+
+        function switchView(view) {
+            document.getElementById('home-view').classList.toggle('hidden', view !== 'home');
+            document.getElementById('download-view').classList.toggle('hidden', view !== 'download');
+            if (view === 'download') renderDownloads();
+        }
+
+        function installFeatured() {
+            startFakeDownload(appsDB[2]);
+        }
+
+        function fakeProfileClick() {
+            showToast("Welcome back, True!");
+        }
+
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-text').textContent = text;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2500);
+        }
+
+        function toggleFilterPanel() {
+            showToast("Filter panel coming soon");
+        }
+
+        // Initialize Desktop Version
+        window.onload = () => {
+            renderApps(appsDB);
+            console.log("%c✅ PlayStore Things - Desktop Mode Loaded", "color:#00a8e8; font-weight:700");
+        };
+    </script>
 </body>
 </html>

@@ -1,490 +1,295 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MyStore - Admin Panel</title>
-  <style>
-    :root {
-      --primary: #4285f4;
-      --success: #34a853;
-      --danger: #ea4335;
-      --text: #202124;
-      --text-light: #5f6368;
-      --bg: #f8f9fa;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Google Sans', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-    .container {
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-    h1 { text-align: center; margin-bottom: 30px; color: var(--primary); }
-    .admin-form {
-      background: white;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      margin-bottom: 40px;
-    }
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-    .form-group { margin-bottom: 18px; }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 500;
-      color: var(--text-light);
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #dadce0;
-      border-radius: 12px;
-      font-size: 15px;
-    }
-    .file-input {
-      padding: 12px;
-      border: 2px dashed #dadce0;
-      border-radius: 12px;
-      text-align: center;
-      cursor: pointer;
-      background: #f8f9fa;
-    }
-    .preview-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 12px;
-    }
-    .preview-item { position: relative; display: inline-block; }
-    .preview {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-    }
-    .remove-btn {
-      position: absolute;
-      top: -6px;
-      right: -6px;
-      background: var(--danger);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 22px;
-      height: 22px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .btn {
-      padding: 12px 24px;
-      border: none;
-      border-radius: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      font-size: 15px;
-      margin-right: 10px;
-    }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-success { background: var(--success); color: white; }
-    .btn-danger { background: var(--danger); color: white; }
-    .btn-warning { background: #fbbc05; color: #202124; }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
-    th, td { padding: 14px 16px; text-align: left; }
-    th {
-      background: #f8f9fa;
-      font-weight: 500;
-      color: var(--text-light);
-    }
-    td { border-top: 1px solid #eee; }
-
-    .downloads {
-      background: #e8f0fe;
-      color: #1a73e8;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 500;
-    }
-
-    .action-btn {
-      padding: 6px 12px;
-      margin-right: 6px;
-      border-radius: 8px;
-      font-size: 13px;
-    }
-    .status {
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-    .status-approved { background: #e6f4ea; color: #137333; }
-    .status-pending { background: #fef3c7; color: #b45309; }
-
-    .back-btn {
-      display: inline-block;
-      margin-bottom: 20px;
-      padding: 10px 20px;
-      background: var(--primary);
-      color: white;
-      text-decoration: none;
-      border-radius: 12px;
-    }
-    .form-title {
-      margin-bottom: 20px;
-      font-size: 22px;
-      color: var(--text);
-    }
-    footer {
-      background: #202124;
-      color: #9aa0a6;
-      text-align: center;
-      padding: 20px;
-      font-size: 13px;
-      margin-top: 40px;
-    }
-    footer a { color: #8ab4f8; text-decoration: none; }
-
-    .jersey-fields { display: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel • PlayStore Things</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+        * { font-family: 'Roboto', sans-serif; }
+        .admin-header { background: linear-gradient(90deg, #1f2937, #111827); }
+        .tab-active { border-bottom: 4px solid #00a8e8; color: #00a8e8; font-weight: 600; }
+    </style>
 </head>
-<body>
+<body class="bg-gray-100">
 
-  <div class="container">
-    <a href="index.html" class="back-btn">← Back to Store</a>
-    <h1>Admin Panel - Manage Store</h1>
-    
-    <div class="admin-form">
-      <h3 class="form-title" id="formTitle">Add New Item</h3>
-      
-      <div class="form-grid">
-        <div class="form-group"><label>Title *</label><input type="text" id="adminTitle" placeholder="Item Title"></div>
-        <div class="form-group">
-          <label>Category</label>
-          <select id="adminCategory" onchange="toggleJerseyFields()">
-            <option value="Games">Games</option>
-            <option value="Apps">Apps</option>
-            <option value="Jerseys">Jerseys</option>
-          </select>
+    <div class="min-h-screen">
+        <header class="admin-header text-white py-5">
+            <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <i class="fas fa-crown text-3xl text-amber-400"></i>
+                    <div><h1 class="text-2xl font-bold">PlayStore Things</h1><p class="text-xs text-gray-400">Admin Dashboard</p></div>
+                </div>
+                <button onclick="window.location.href='index.html'" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-5 py-2 rounded-full">
+                    <i class="fas fa-store"></i> Back to Store
+                </button>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <div class="flex border-b mb-8 bg-white rounded-t-3xl">
+                <button onclick="switchAdminTab(0)" id="tab-0" class="tab-active flex-1 py-5 text-center">Manage Apps</button>
+                <button onclick="switchAdminTab(1)" id="tab-1" class="flex-1 py-5 text-center">Dashboard</button>
+            </div>
+
+            <div id="tab-content-0">
+                <div class="flex justify-between mb-6">
+                    <h2 class="text-2xl font-semibold">All Apps</h2>
+                    <button onclick="showAddModal()" class="bg-[#00a8e8] text-white px-6 py-3 rounded-3xl flex items-center gap-2 hover:bg-[#0099d0]">
+                        <i class="fas fa-plus"></i> Add New App
+                    </button>
+                </div>
+                <div id="admin-apps-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+
+            <div id="tab-content-1" class="hidden">
+                <h2 class="text-2xl font-semibold mb-6">Dashboard</h2>
+                <div class="bg-white p-8 rounded-3xl text-center">
+                    <p class="text-gray-500">Total Apps</p>
+                    <p id="dash-apps" class="text-6xl font-bold text-[#00a8e8]">0</p>
+                </div>
+            </div>
         </div>
-
-        <!-- Icon -->
-        <div class="form-group">
-          <label>Icon</label>
-          <input type="file" id="iconUpload" accept="image/*" class="file-input" onchange="previewIcon(this)">
-          <div id="iconPreview" class="preview-container"></div>
-        </div>
-
-        <!-- Screenshots -->
-        <div class="form-group">
-          <label>Screenshots (multiple)</label>
-          <input type="file" id="screenshotUpload" accept="image/*" multiple class="file-input" onchange="previewScreenshots(this)">
-          <div id="screenshotPreview" class="preview-container"></div>
-        </div>
-
-        <!-- Download Link -->
-        <div class="form-group" style="grid-column: 1 / -1;">
-          <label>Direct Download / Buy Now URL</label>
-          <input type="url" id="adminDownloadLink" placeholder="https://example.com/file.apk or buy link" style="font-family:monospace;">
-          <small style="color:#666;">APK for apps/games • Buy/Whatsapp link for jerseys</small>
-        </div>
-
-        <!-- App/Game fields -->
-        <div class="form-group app-fields"><label>Package Name</label><input type="text" id="adminPackage" placeholder="com.company.appname"></div>
-        <div class="form-group app-fields"><label>Version</label><input type="text" id="adminVersion" placeholder="2.4.1"></div>
-        <div class="form-group app-fields"><label>Build Number</label><input type="text" id="adminBuild" placeholder="241003"></div>
-        <div class="form-group app-fields"><label>Developer</label><input type="text" id="adminDev" placeholder="Developer Name"></div>
-        <div class="form-group app-fields"><label>Contact Email</label><input type="text" id="adminContact" placeholder="dev@example.com"></div>
-
-        <!-- Jersey fields -->
-        <div class="form-group jersey-fields"><label>Price (₹)</label><input type="number" id="adminPrice" placeholder="999" min="0"></div>
-        <div class="form-group jersey-fields"><label>Available Sizes</label><input type="text" id="adminSize" placeholder="S, M, L, XL, XXL"></div>
-        <div class="form-group jersey-fields"><label>Colors</label><input type="text" id="adminColor" placeholder="Red, Blue, Black"></div>
-        <div class="form-group jersey-fields"><label>Stock Quantity</label><input type="number" id="adminStock" placeholder="50" min="0"></div>
-
-        <div class="form-group">
-          <label>Total Downloads / Sold</label>
-          <input type="number" id="adminDownloads" placeholder="0" min="0" value="0">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Description</label>
-        <textarea id="adminDesc" rows="4" placeholder="Short description..."></textarea>
-      </div>
-
-      <button class="btn btn-primary" id="saveBtn" onclick="saveApp()">Save as Pending</button>
-      <button class="btn" onclick="clearAdminForm()">Clear Form</button>
     </div>
 
-    <h3>All Items (Pending & Approved)</h3>
-    <table id="adminTable">
-      <thead>
-        <tr>
-          <th>Icon</th>
-          <th>Title</th>
-          <th>Category</th>
-          <th>Downloads/Sold</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="adminTableBody"></tbody>
-    </table>
-  </div>
+    <!-- Add/Edit App Modal -->
+    <div id="admin-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+        <div class="bg-white rounded-3xl w-full max-w-lg mx-4 p-8 max-h-[90vh] overflow-auto">
+            <h2 id="modal-title" class="text-2xl font-semibold mb-6">Add New App</h2>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium mb-2">App Logo</label>
+                    <input type="file" id="logo-upload" accept="image/*" class="hidden" onchange="previewLogo(this)">
+                    <div onclick="document.getElementById('logo-upload').click()" class="border-2 border-dashed border-gray-300 hover:border-[#00a8e8] rounded-3xl p-6 text-center cursor-pointer">
+                        <div id="logo-preview"></div>
+                        <p class="text-sm text-gray-500 mt-2">Click to upload logo</p>
+                    </div>
+                </div>
 
-  <footer>
-    <div>Contact: <a href="mailto:dreammods145@gmail.com">dreammods145@gmail.com</a></div>
-    <div>Copyright © 2026-2027 MyStore. All Rights Reserved.</div>
-    <div>Web made by <strong>dream X YASH Mods</strong></div>
-  </footer>
+                <input id="app-name" placeholder="App Name *" class="w-full border rounded-2xl px-5 py-4">
 
-  <script>
-    let apps = JSON.parse(localStorage.getItem('storeApps')) || [];
-    let iconBase64 = '';
-    let screenshotBase64s = [];
-    let editingId = null;
+                <select id="app-category" class="w-full border rounded-2xl px-5 py-4">
+                    <option value="tools">Tools & Things</option>
+                    <option value="games">Games</option>
+                    <option value="apps">Apps</option>
+                    <option value="jerseys">Jerseys</option>
+                </select>
 
-    function saveToStorage() {
-      localStorage.setItem('storeApps', JSON.stringify(apps));
-    }
+                <div>
+                    <label class="block text-sm font-medium mb-2">Screenshots</label>
+                    <input type="file" id="screenshots-upload" accept="image/*" multiple class="hidden" onchange="previewScreenshots(this)">
+                    <div onclick="document.getElementById('screenshots-upload').click()" class="border-2 border-dashed border-gray-300 hover:border-[#00a8e8] rounded-3xl p-6 text-center cursor-pointer">
+                        <div id="screenshots-preview" class="flex flex-wrap gap-3 justify-center"></div>
+                        <p class="text-sm text-gray-500 mt-2">Click to upload screenshots</p>
+                    </div>
+                </div>
 
-    function toggleJerseyFields() {
-      const isJersey = document.getElementById('adminCategory').value === 'Jerseys';
-      document.querySelectorAll('.app-fields').forEach(el => el.style.display = isJersey ? 'none' : 'block');
-      document.querySelectorAll('.jersey-fields').forEach(el => el.style.display = isJersey ? 'block' : 'none');
-    }
+                <textarea id="app-desc" rows="3" placeholder="Description" class="w-full border rounded-2xl px-5 py-4"></textarea>
+                <input id="app-download-url" placeholder="APK Download URL" value="https://playstore.things/apk/" class="w-full border rounded-2xl px-5 py-4">
+            </div>
 
-    function previewIcon(input) {
-      const preview = document.getElementById('iconPreview');
-      preview.innerHTML = '';
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = e => {
-          iconBase64 = e.target.result;
-          const img = document.createElement('img');
-          img.src = iconBase64;
-          img.className = 'preview';
-          preview.appendChild(img);
-        };
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
+            <div class="flex gap-4 mt-8">
+                <button onclick="saveApp()" class="flex-1 bg-[#00a8e8] text-white py-4 rounded-3xl font-semibold">Save & Publish to Store</button>
+                <button onclick="hideAdminModal()" class="flex-1 border py-4 rounded-3xl font-semibold">Cancel</button>
+            </div>
+        </div>
+    </div>
 
-    function previewScreenshots(input) {
-      const container = document.getElementById('screenshotPreview');
-      Array.from(input.files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = e => {
-          const base64 = e.target.result;
-          screenshotBase64s.push(base64);
-
-          const item = document.createElement('div');
-          item.className = 'preview-item';
-          item.innerHTML = `
-            <img src="${base64}" class="preview">
-            <button class="remove-btn" onclick="removeScreenshot(this, '${base64}')">×</button>
-          `;
-          container.appendChild(item);
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function removeScreenshot(btn, base64) {
-      screenshotBase64s = screenshotBase64s.filter(b => b !== base64);
-      btn.parentElement.remove();
-    }
-
-    function saveApp() {
-      const title = document.getElementById('adminTitle').value.trim();
-      if (!title) return alert("Title is required!");
-
-      const category = document.getElementById('adminCategory').value;
-
-      const appData = {
-        id: editingId !== null ? editingId : Date.now(),
-        title,
-        category,
-        icon: iconBase64 || "https://picsum.photos/id/237/512/512",
-        screenshots: [...screenshotBase64s],
-        desc: document.getElementById('adminDesc').value.trim() || "",
-        downloadLink: document.getElementById('adminDownloadLink').value.trim() || "#",
-        totalDownloads: parseInt(document.getElementById('adminDownloads').value) || 0,
-        status: editingId !== null ? (apps.find(a => a.id === editingId)?.status || "pending") : "pending"
-      };
-
-      if (category === "Jerseys") {
-        appData.price = parseFloat(document.getElementById('adminPrice').value) || 0;
-        appData.size = document.getElementById('adminSize').value.trim();
-        appData.color = document.getElementById('adminColor').value.trim();
-        appData.stock = parseInt(document.getElementById('adminStock').value) || 0;
-      } else {
-        appData.packageName = document.getElementById('adminPackage').value || "com.example.app";
-        appData.version = document.getElementById('adminVersion').value || "1.0.0";
-        appData.buildNumber = document.getElementById('adminBuild').value || "100000";
-        appData.dev = document.getElementById('adminDev').value || "Unknown";
-        appData.contact = document.getElementById('adminContact').value || "contact@example.com";
-      }
-
-      if (editingId !== null) {
-        const index = apps.findIndex(a => a.id === editingId);
-        if (index !== -1) {
-          apps[index] = { ...apps[index], ...appData };
-          alert("Item updated successfully!");
+    <script>
+        // Safe localStorage wrapper
+        function safeSetItem(key, value) {
+            try {
+                localStorage.setItem(key, value);
+                return true;
+            } catch (e) {
+                if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                    console.warn("Storage quota exceeded. Clearing old data...");
+                    try {
+                        localStorage.clear();
+                        localStorage.setItem(key, value);
+                        return true;
+                    } catch (clearError) {
+                        alert("Storage is full. Please clear browser data or use smaller images.");
+                        return false;
+                    }
+                }
+                return false;
+            }
         }
-      } else {
-        apps.push(appData);
-        alert(`New ${category} added as **Pending**.`);
-      }
 
-      saveToStorage();
-      clearAdminForm();
-      loadAdminTable();
-    }
-
-    function loadAdminTable() {
-      const tbody = document.getElementById('adminTableBody');
-      tbody.innerHTML = '';
-
-      apps.forEach((app, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td><img src="${app.icon}" width="48" height="48" style="border-radius:8px;" onerror="this.src='https://picsum.photos/id/237/512/512'"></td>
-          <td>${app.title}</td>
-          <td>${app.category}</td>
-          <td><span class="downloads"><strong>${app.totalDownloads || 0}</strong> ${app.category === "Jerseys" ? "sold" : "downloads"}</span></td>
-          <td><span class="status ${app.status === 'approved' ? 'status-approved' : 'status-pending'}">
-            ${app.status === 'approved' ? 'Approved' : 'Pending'}
-          </span></td>
-          <td>
-            <button class="btn btn-warning action-btn" onclick="editApp(${index})">Edit</button>
-            ${app.status !== 'approved' ? 
-              `<button class="btn btn-success action-btn" onclick="approveApp(${app.id})">Approve</button>` : ''}
-            <button class="btn btn-danger action-btn" onclick="deleteApp(${app.id})">Delete</button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-    }
-
-    function approveApp(id) {
-      if (confirm("Approve this item? It will now appear in the main store.")) {
-        const app = apps.find(a => a.id === id);
-        if (app) {
-          app.status = "approved";
-          saveToStorage();
-          loadAdminTable();
+        let appsDB = [];
+        try {
+            const saved = localStorage.getItem('playstoreApps');
+            if (saved) appsDB = JSON.parse(saved);
+        } catch (e) {
+            appsDB = [];
         }
-      }
-    }
 
-    function deleteApp(id) {
-      if (confirm("Delete this item permanently?")) {
-        apps = apps.filter(a => a.id !== id);
-        saveToStorage();
-        loadAdminTable();
-      }
-    }
+        let tempLogo = '';
+        let tempScreenshots = [];
+        let editingAppId = null;   // NEW: Track which app is being edited
 
-    function editApp(index) {
-      const app = apps[index];
-      if (!app) return;
+        function previewLogo(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    tempLogo = e.target.result;
+                    document.getElementById('logo-preview').innerHTML = `<img src="${e.target.result}" class="max-h-32 mx-auto rounded-2xl">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
 
-      editingId = app.id;
-      document.getElementById('formTitle').textContent = `Edit ${app.category}`;
-      document.getElementById('saveBtn').textContent = "Update Item";
+        function previewScreenshots(input) {
+            const container = document.getElementById('screenshots-preview');
+            container.innerHTML = '';
+            tempScreenshots = [];
+            Array.from(input.files).slice(0, 3).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    tempScreenshots.push(e.target.result);
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = "w-24 h-16 object-cover rounded-xl";
+                    container.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
 
-      document.getElementById('adminTitle').value = app.title || "";
-      document.getElementById('adminCategory').value = app.category || "Apps";
-      document.getElementById('adminDesc').value = app.desc || "";
-      document.getElementById('adminDownloadLink').value = app.downloadLink && app.downloadLink !== "#" ? app.downloadLink : "";
-      document.getElementById('adminDownloads').value = app.totalDownloads || 0;
+        function showAddModal() {
+            editingAppId = null;
+            tempLogo = '';
+            tempScreenshots = [];
+            document.getElementById('logo-preview').innerHTML = '';
+            document.getElementById('screenshots-preview').innerHTML = '';
+            document.getElementById('modal-title').textContent = "Add New App";
+            document.getElementById('app-name').value = '';
+            document.getElementById('app-desc').value = '';
+            document.getElementById('app-download-url').value = 'https://playstore.things/apk/new-app.apk';
+            document.getElementById('admin-modal').classList.remove('hidden');
+            document.getElementById('admin-modal').classList.add('flex');
+        }
 
-      toggleJerseyFields();
+        // NEW: Edit function
+        function editApp(id) {
+            const app = appsDB.find(a => a.id === id);
+            if (!app) return;
 
-      // Icon preview
-      iconBase64 = app.icon || "";
-      document.getElementById('iconPreview').innerHTML = app.icon ? `<img src="${app.icon}" class="preview">` : '';
+            editingAppId = id;
+            tempLogo = app.icon;
+            tempScreenshots = app.screenshots || [];
 
-      // Screenshots preview
-      screenshotBase64s = [...(app.screenshots || [])];
-      const ssPreview = document.getElementById('screenshotPreview');
-      ssPreview.innerHTML = '';
-      screenshotBase64s.forEach(src => {
-        const item = document.createElement('div');
-        item.className = 'preview-item';
-        item.innerHTML = `
-          <img src="${src}" class="preview">
-          <button class="remove-btn" onclick="removeScreenshot(this, '${src}')">×</button>
-        `;
-        ssPreview.appendChild(item);
-      });
+            document.getElementById('modal-title').textContent = "Edit App";
+            document.getElementById('app-name').value = app.name;
+            document.getElementById('app-category').value = app.category;
+            document.getElementById('app-desc').value = app.desc || '';
+            document.getElementById('app-download-url').value = app.downloadUrl || '';
 
-      if (app.category === "Jerseys") {
-        document.getElementById('adminPrice').value = app.price || "";
-        document.getElementById('adminSize').value = app.size || "";
-        document.getElementById('adminColor').value = app.color || "";
-        document.getElementById('adminStock').value = app.stock || "";
-      } else {
-        document.getElementById('adminPackage').value = app.packageName || "";
-        document.getElementById('adminVersion').value = app.version || "";
-        document.getElementById('adminBuild').value = app.buildNumber || "";
-        document.getElementById('adminDev').value = app.dev || "";
-        document.getElementById('adminContact').value = app.contact || "";
-      }
+            // Show logo preview
+            document.getElementById('logo-preview').innerHTML = `<img src="${app.icon}" class="max-h-32 mx-auto rounded-2xl">`;
 
-      document.querySelector('.admin-form').scrollIntoView({ behavior: "smooth" });
-    }
+            // Show screenshots preview
+            const scContainer = document.getElementById('screenshots-preview');
+            scContainer.innerHTML = '';
+            (app.screenshots || []).forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = "w-24 h-16 object-cover rounded-xl";
+                scContainer.appendChild(img);
+            });
 
-    function clearAdminForm() {
-      editingId = null;
-      iconBase64 = '';
-      screenshotBase64s = [];
+            document.getElementById('admin-modal').classList.remove('hidden');
+            document.getElementById('admin-modal').classList.add('flex');
+        }
 
-      document.getElementById('formTitle').textContent = "Add New Item";
-      document.getElementById('saveBtn').textContent = "Save as Pending";
+        function saveApp() {
+            const name = document.getElementById('app-name').value.trim();
+            if (!name) {
+                alert("Please enter app name");
+                return;
+            }
 
-      document.getElementById('iconPreview').innerHTML = '';
-      document.getElementById('screenshotPreview').innerHTML = '';
-      document.getElementById('iconUpload').value = '';
-      document.getElementById('screenshotUpload').value = '';
+            const newApp = {
+                id: editingAppId || Date.now(),
+                name: name,
+                category: document.getElementById('app-category').value,
+                icon: tempLogo || "https://picsum.photos/id/1016/200/200",
+                screenshots: tempScreenshots.length ? tempScreenshots : ["https://picsum.photos/id/20/800/450"],
+                desc: document.getElementById('app-desc').value || "New app added by admin",
+                downloadUrl: document.getElementById('app-download-url').value || `https://playstore.things/apk/${name.toLowerCase().replace(/\s+/g,'-')}.apk`,
+                reviews: editingAppId ? (appsDB.find(a => a.id === editingAppId)?.reviews || []) : []
+            };
 
-      const fields = ['adminTitle','adminPackage','adminVersion','adminBuild','adminDev','adminContact',
-                      'adminDesc','adminDownloadLink','adminDownloads','adminPrice','adminSize','adminColor','adminStock'];
-      fields.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = ['adminDownloads','adminStock','adminPrice'].includes(id) ? '0' : '';
-      });
+            if (editingAppId) {
+                // Update existing app
+                const index = appsDB.findIndex(a => a.id === editingAppId);
+                if (index !== -1) appsDB[index] = newApp;
+            } else {
+                // Add new app
+                appsDB.unshift(newApp);
+            }
 
-      document.getElementById('adminCategory').value = 'Games';
-      toggleJerseyFields();
-    }
+            const success = safeSetItem('playstoreApps', JSON.stringify(appsDB));
 
-    // Initialize
-    window.onload = () => {
-      loadAdminTable();
-      toggleJerseyFields();
-    };
-  </script>
+            if (success) {
+                hideAdminModal();
+                renderAdminApps();
+                alert(editingAppId ? `✅ "\( {name}" has been updated!` : `✅ " \){name}" has been successfully published to the store!`);
+            } else {
+                alert("Could not save due to storage limits. Try smaller images.");
+            }
+        }
+
+        function renderAdminApps() {
+            const container = document.getElementById('admin-apps-grid');
+            container.innerHTML = appsDB.map(app => `
+                <div class="bg-white rounded-3xl p-6 border border-gray-200">
+                    <img src="${app.icon}" class="w-16 h-16 rounded-2xl mx-auto mb-4">
+                    <p class="font-semibold text-center">${app.name}</p>
+                    <p class="text-xs text-center text-gray-500">${app.category}</p>
+                    <div class="flex gap-2 mt-6">
+                        <button onclick="editApp(${app.id}); event.stopImmediatePropagation()" 
+                                class="flex-1 py-3 bg-blue-50 text-blue-600 rounded-2xl text-sm font-medium">Edit</button>
+                        <button onclick="deleteApp(${app.id}); event.stopImmediatePropagation()" 
+                                class="flex-1 py-3 bg-red-50 text-red-600 rounded-2xl text-sm font-medium">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('dash-apps').textContent = appsDB.length;
+        }
+
+        function deleteApp(id) {
+            if (confirm("Delete this app from store?")) {
+                appsDB = appsDB.filter(a => a.id !== id);
+                safeSetItem('playstoreApps', JSON.stringify(appsDB));
+                renderAdminApps();
+            }
+        }
+
+        function hideAdminModal() {
+            const modal = document.getElementById('admin-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            editingAppId = null;
+        }
+
+        function switchAdminTab(tab) {
+            document.querySelectorAll('[id^="tab-content-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-content-${tab}`).classList.remove('hidden');
+            document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.remove('tab-active'));
+            document.getElementById(`tab-${tab}`).classList.add('tab-active');
+        }
+
+        window.onload = () => {
+            renderAdminApps();
+            switchAdminTab(0);
+            console.log("%c✅ admin.html - Edit option added successfully", "color:#00a8e8; font-weight:bold");
+        };
+    </script>
 </body>
 </html>
