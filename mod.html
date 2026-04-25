@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mod Creator | Dream Store</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+    :root {
+        --bg: #05070a;
+        --card: rgba(30, 41, 59, 0.4);
+        --accent-blue: #38bdf8;
+        --accent-orange: #fb923c;
+    }
+
+    body {
+        background-color: var(--bg);
+        background-image: radial-gradient(circle at top, #1e293b 0%, #05070a 100%);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: white;
+        min-height: 100vh;
+        margin-bottom: 50px;
+    }
+
+    .glass {
+        background: var(--card);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 24px;
+    }
+
+    .card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-player {
+        background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-team {
+        background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+        box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+    }
+
+    /* Custom Scrollbar */
+    #historyList::-webkit-scrollbar { width: 5px; }
+    #historyList::-webkit-scrollbar-track { background: transparent; }
+    #historyList::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+</style>
+</head>
+
+<body class="p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto">
+        
+        <div class="flex items-center justify-between mb-10">
+            <a href="index.html" class="text-slate-400 font-bold hover:text-white transition">← EXIT CREATOR</a>
+            <div class="bg-emerald-500/10 text-emerald-400 px-4 py-1 rounded-full border border-emerald-500/20 text-xs font-bold tracking-widest uppercase">
+                🟢 Verified System
+            </div>
+        </div>
+
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-black tracking-tight mb-2 uppercase">Mod Creator</h1>
+            <p class="text-slate-500 text-sm">Request custom assets for Cricket X 26</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            
+            <div class="card glass p-8 text-center group">
+                <div class="w-16 h-16 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl group-hover:scale-110 transition">
+                    👤
+                </div>
+                <h3 class="text-xl font-extrabold mb-2">Custom Player</h3>
+                <p class="text-slate-400 text-sm mb-8 leading-relaxed">Create a single legend with custom stats and faces.</p>
+                <button onclick="submitRequest('Player')" class="btn-player w-full py-4 rounded-16 font-black text-slate-950 uppercase tracking-wider rounded-xl transition hover:brightness-110">
+                    Open Editor
+                </button>
+            </div>
+
+            <div class="card glass p-8 text-center group">
+                <div class="w-16 h-16 bg-orange-500/20 text-orange-400 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl group-hover:scale-110 transition">
+                    👥
+                </div>
+                <h3 class="text-xl font-extrabold mb-2">Custom Team</h3>
+                <p class="text-slate-400 text-sm mb-8 leading-relaxed">Build a full 15-man squad with jerseys and logos.</p>
+                <button onclick="submitRequest('Team')" class="btn-team w-full py-4 rounded-16 font-black text-slate-950 uppercase tracking-wider rounded-xl transition hover:brightness-110">
+                    open
+                </button>
+            </div>
+
+        </div>
+
+        <div class="glass p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-[2px]">Recent Requests (<span id="count">0</span>)</h3>
+                <button onclick="clearHistory()" class="text-[10px] text-red-400 font-bold hover:underline">CLEAR ALL</button>
+            </div>
+
+            <div id="historyList" class="space-y-3 max-height-[300px] overflow-y-auto pr-2">
+                </div>
+            
+            <div id="emptyState" class="text-center py-10 text-slate-600 hidden">
+                No active requests found
+            </div>
+        </div>
+
+    </div>
+
+<script>
+    let requests = JSON.parse(localStorage.getItem("requests")) || [];
+
+    function updateUI() {
+        document.getElementById("count").innerText = requests.length;
+        let list = document.getElementById("historyList");
+        let empty = document.getElementById("emptyState");
+        
+        if (requests.length === 0) {
+            empty.classList.remove("hidden");
+            list.classList.add("hidden");
+        } else {
+            empty.classList.add("hidden");
+            list.classList.remove("hidden");
+        }
+
+        list.innerHTML = "";
+        requests.slice().reverse().forEach((req, i) => {
+            const isPlayer = req.type === 'Player';
+            list.innerHTML += `
+                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                    <div class="flex items-center gap-4">
+                        <div class="w-2 h-2 rounded-full ${isPlayer ? 'bg-blue-400' : 'bg-orange-400'} shadow-[0_0_8px_rgba(255,255,255,0.3)]"></div>
+                        <div>
+                            <div class="font-bold text-sm text-slate-200">${req.type} Request</div>
+                            <div class="text-[10px] text-slate-500 uppercase font-bold tracking-tighter">${req.time}</div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] font-black text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded">PENDING</div>
+                </div>
+            `;
+        });
+    }
+
+    function submitRequest(type) {
+        let newRequest = {
+            type: type,
+            time: new Date().toLocaleString()
+        };
+
+        requests.push(newRequest);
+        localStorage.setItem("requests", JSON.stringify(requests));
+        updateUI();
+
+        const url = type === "Player" ? "Player.html" : "team.html";
+        window.open(url, "_blank");
+    }
+
+    function clearHistory() {
+        if(confirm("Delete all request history?")) {
+            requests = [];
+            localStorage.setItem("requests", JSON.stringify(requests));
+            updateUI();
+        }
+    }
+
+    updateUI();
+</script>
+
+</body>
+</html>
